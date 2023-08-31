@@ -3,6 +3,7 @@ module github.com/NamitBhutani/goLiveCodeEditor
 go 1.21.0
 
 require (
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	google.golang.org/grpc v1.57.0
 	google.golang.org/protobuf v1.31.0
 )
