@@ -38,7 +38,7 @@ message RefreshTokenResponse{
 }
 
 message LogoutRequest{
-    string token = 1;
+    string refreshtoken = 1;
 }
 
 message LogoutResponse{

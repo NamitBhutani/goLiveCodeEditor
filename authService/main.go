@@ -114,6 +114,8 @@ func (s *authServiceServer) Login(ctx context.Context, req *pb.LoginRequest) (*p
 	if err != nil {
 		return nil, err
 	}
+	user.RefreshToken = refreshToken
+	db.Save(&user)
 
 	return &pb.LoginResponse{
 		Accesstoken:  accessToken,
@@ -123,19 +125,29 @@ func (s *authServiceServer) Login(ctx context.Context, req *pb.LoginRequest) (*p
 
 func (s *authServiceServer) RefreshToken(ctx context.Context, req *pb.RefreshTokenRequest) (*pb.RefreshTokenResponse, error) {
 	// Validate the refresh token
-	_, err := validateToken(req.Refreshtoken, refreshExpire)
+	token, err := validateToken(req.Refreshtoken, refreshExpire)
 	if err != nil {
 		return nil, err
 	}
 
+	// Extract the username from the token claims
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return nil, fmt.Errorf("invalid token claims")
+	}
+	username, ok := claims["username"].(string)
+	if !ok {
+		return nil, fmt.Errorf("invalid username in token claims")
+	}
+
 	// Generate a new access token
-	newAccessToken, err := generateToken(req.Username, accessExpire)
+	accessToken, err := generateToken(username, accessExpire)
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.RefreshTokenResponse{
-		Accesstoken: newAccessToken,
+		Accesstoken: accessToken,
 	}, nil
 }
 
@@ -164,7 +176,7 @@ func (s *authServiceServer) Register(ctx context.Context, req *pb.RegisterReques
 }
 
 func (s *authServiceServer) Logout(ctx context.Context, req *pb.LogoutRequest) (*pb.LogoutResponse, error) {
-	token, err := validateToken(req.Token, accessExpire)
+	token, err := validateToken(req.Refreshtoken, refreshExpire)
 	if err != nil {
 		return nil, err
 	}
@@ -173,9 +185,6 @@ func (s *authServiceServer) Logout(ctx context.Context, req *pb.LogoutRequest) (
 		return nil, fmt.Errorf("invalid token claims")
 	}
 	tokenString := token.Raw
-	if !ok {
-		return nil, fmt.Errorf("invalid token string")
-	}
 	err = db.Create(&database.TokenBlacklist{Token: tokenString}).Error
 	if err != nil {
 		return nil, err
