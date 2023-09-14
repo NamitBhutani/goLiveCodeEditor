@@ -34,6 +34,10 @@ func init() {
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
+	err = db.AutoMigrate(&database.User{}, &database.TokenBlacklist{})
+	if err != nil {
+		log.Fatalf("failed to automigrate tables: %v", err)
+	}
 }
 
 func generateToken(username string, expireTime time.Duration) (string, error) {
