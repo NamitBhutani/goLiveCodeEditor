@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/http"
 	"os"
 	"time"
 
 	"github.com/NamitBhutani/goLiveCodeEditor/database"
 	pb "github.com/NamitBhutani/goLiveCodeEditor/proto"
 	"github.com/golang-jwt/jwt"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc"
 	"gorm.io/gorm"
@@ -205,10 +207,32 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-
+	go runProxyServer()
 	grpcServer := grpc.NewServer()
 	pb.RegisterAuthServiceServer(grpcServer, &authServiceServer{})
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
+
+}
+func runProxyServer() {
+	grpcMuxHandler := runtime.NewServeMux()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	err := pb.RegisterAuthServiceHandlerServer(ctx, grpcMuxHandler, &authServiceServer{})
+	if err != nil {
+		log.Fatalf("failed to register REST gateway: %v", err)
+	}
+	muxServe := http.NewServeMux()
+	muxServe.Handle("/", grpcMuxHandler)
+	lis, err := net.Listen("tcp", ":8081")
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+	err = http.Serve(lis, muxServe)
+	if err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
+	//for future ref: grpcMuxHandler is the handler made by grpc-gateway,
+	//which is then passed to http.Serve to handle and serve it as http request
 }
