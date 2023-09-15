@@ -19,7 +19,6 @@ service authService{
     rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse){
         option (google.api.http) = {
             get: "/v1/refresh"
-            body: "*"
             };
         };
     rpc Logout(LogoutRequest) returns (LogoutResponse){
@@ -27,8 +26,7 @@ service authService{
             post: "/v1/logout"
             body: "*"
             };
-        };
-
+  };
 }
 
 message RegisterRequest{
