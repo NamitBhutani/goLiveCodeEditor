@@ -28,6 +28,7 @@ type authServiceServer struct {
 	pb.UnimplementedAuthServiceServer
 }
 
+// db conn
 func init() {
 	var err error
 	db, err = database.ConnectDB()
@@ -154,6 +155,12 @@ func (s *authServiceServer) RefreshToken(ctx context.Context, req *pb.RefreshTok
 func (s *authServiceServer) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
 	username := req.Username
 	password := req.Password
+	if username == "" {
+		return nil, fmt.Errorf("username is empty")
+	}
+	if password == "" {
+		return nil, fmt.Errorf("password is empty")
+	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
@@ -170,7 +177,7 @@ func (s *authServiceServer) Register(ctx context.Context, req *pb.RegisterReques
 
 	err = db.Create(&newUser).Error
 	if err != nil {
-		return nil, err
+		return &pb.RegisterResponse{Success: false}, err
 	}
 	return &pb.RegisterResponse{Success: true}, nil
 }
