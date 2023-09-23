@@ -1,8 +1,8 @@
-1**Backend Technologies and Their Associated Features:**
+**Backend Technologies and Their Associated Features:**
 
-1. **Web Workers for Improved Frontend Performance:**
+1. **Web GPU**
 
-   - Web Workers: Use Web Workers to offload CPU-intensive tasks from the main thread, improving UI responsiveness.
+   - Web GPU: Use Web GPU for cool 3D visuals
 
 2. **Microservices Architecture with Docker and Kubernetes:**
 

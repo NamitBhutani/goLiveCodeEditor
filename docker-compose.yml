@@ -1,0 +1,1 @@
+# docker run --name authService -e POSTGRES_USER=auth -e POSTGRES_PASSWORD=pwd -p 5432:5432 -v authServiceData:/var/lib/postgresql/data -d postgres:latest
