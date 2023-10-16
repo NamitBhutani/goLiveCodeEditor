@@ -5,10 +5,4 @@ const nextConfig = {
   reactStrictMode: true,
 };
 
-const millionConfig = {
-  auto: true,
-  // if you're using RSC:
-  // auto: { rsc: true },
-};
-
-export default million.next(nextConfig, millionConfig);
+export default million.next(nextConfig);
