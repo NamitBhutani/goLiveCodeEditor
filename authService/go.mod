@@ -1,4 +1,4 @@
-module github.com/NamitBhutani/goLiveCodeEditor
+module github.com/NamitBhutani/goLiveCodeEditor/authService
 
 go 1.21.0
 

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	pb "github.com/NamitBhutani/goLiveCodeEditor/proto"
+	pb "github.com/NamitBhutani/goLiveCodeEditor/authService/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

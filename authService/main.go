@@ -9,8 +9,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/NamitBhutani/goLiveCodeEditor/database"
-	pb "github.com/NamitBhutani/goLiveCodeEditor/proto"
+	"github.com/NamitBhutani/goLiveCodeEditor/authService/database"
+	pb "github.com/NamitBhutani/goLiveCodeEditor/authService/proto"
 	"github.com/golang-jwt/jwt"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"golang.org/x/crypto/bcrypt"
